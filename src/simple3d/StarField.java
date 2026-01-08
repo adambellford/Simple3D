@@ -214,39 +214,39 @@ public class StarField extends GameCanvas implements Runnable {
         for(int i = 0; i < meshCube.tris.size(); i++) {
             Triangle current = (Triangle) meshCube.tris.elementAt(i);
             
-            rotatedZ.p[0] = MultiplyMatrixVector(matRotZ, current.p[0]);
-            rotatedZ.p[1] = MultiplyMatrixVector(matRotZ, current.p[1]);
-            rotatedZ.p[2] = MultiplyMatrixVector(matRotZ, current.p[2]);
+            rotatedZ.v0 = MultiplyMatrixVector(matRotZ, current.v0);
+            rotatedZ.v1 = MultiplyMatrixVector(matRotZ, current.v1);
+            rotatedZ.v2 = MultiplyMatrixVector(matRotZ, current.v2);
             
-            rotatedZX.p[0] = MultiplyMatrixVector(matRotX, rotatedZ.p[0]);
-            rotatedZX.p[1] = MultiplyMatrixVector(matRotX, rotatedZ.p[1]);
-            rotatedZX.p[2] = MultiplyMatrixVector(matRotX, rotatedZ.p[2]);
+            rotatedZX.v0 = MultiplyMatrixVector(matRotX, rotatedZ.v0);
+            rotatedZX.v1 = MultiplyMatrixVector(matRotX, rotatedZ.v1);
+            rotatedZX.v2 = MultiplyMatrixVector(matRotX, rotatedZ.v2);
             
             translated = rotatedZX;
-            translated.p[0].z = rotatedZX.p[0].z + 3f;
-            translated.p[1].z = rotatedZX.p[1].z + 3f;
-            translated.p[2].z = rotatedZX.p[2].z + 3f;
+            translated.v0.z = rotatedZX.v0.z + 3f;
+            translated.v1.z = rotatedZX.v1.z + 3f;
+            translated.v2.z = rotatedZX.v2.z + 3f;
             
-            projected.p[0] = MultiplyMatrixVector(matProj, translated.p[0]);
-            projected.p[1] = MultiplyMatrixVector(matProj, translated.p[1]);
-            projected.p[2] = MultiplyMatrixVector(matProj, translated.p[2]);
+            projected.v0 = MultiplyMatrixVector(matProj, translated.v0);
+            projected.v1 = MultiplyMatrixVector(matProj, translated.v1);
+            projected.v2 = MultiplyMatrixVector(matProj, translated.v2);
             
             // Scale into view
-            projected.p[0].x += 1f; projected.p[0].y += 1f;
-            projected.p[1].x += 1f; projected.p[1].y += 1f;
-            projected.p[2].x += 1f; projected.p[2].y += 1f;
+            projected.v0.x += 1f; projected.v0.y += 1f;
+            projected.v1.x += 1f; projected.v1.y += 1f;
+            projected.v2.x += 1f; projected.v2.y += 1f;
             
-            projected.p[0].x *= 0.5f * (float)width;
-            projected.p[0].y *= 0.5f * (float)height;
-            projected.p[1].x *= 0.5f * (float)width;
-            projected.p[1].y *= 0.5f * (float)height;
-            projected.p[2].x *= 0.5f * (float)width;
-            projected.p[2].y *= 0.5f * (float)height;
+            projected.v0.x *= 0.5f * (float)width;
+            projected.v0.y *= 0.5f * (float)height;
+            projected.v1.x *= 0.5f * (float)width;
+            projected.v1.y *= 0.5f * (float)height;
+            projected.v2.x *= 0.5f * (float)width;
+            projected.v2.y *= 0.5f * (float)height;
 
             drawTriangle(
-                projected.p[0].x, projected.p[0].y,
-                projected.p[1].x, projected.p[1].y,
-                projected.p[2].x, projected.p[2].y
+                projected.v0.x, projected.v0.y,
+                projected.v1.x, projected.v1.y,
+                projected.v2.x, projected.v2.y
             );
         }
     }

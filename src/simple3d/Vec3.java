@@ -22,7 +22,7 @@ public final class Vec3 {
             this.y = a[1];
             this.z = a[2];
         } else {
-            this.x = 0f; this.y = 0f; this.z = 0f;
+            this.x = this.y = this.z = 0f;
         }
     }
     
@@ -35,7 +35,7 @@ public final class Vec3 {
     public static final Vec3 ZERO = new Vec3();
     public static final Vec3 ONE = new Vec3(1f, 1f, 1f);
     
-    
+    /*
     public static final Vec3 BACK = new Vec3(0f, 0f, -1f);
     public static final Vec3 FORWARD = new Vec3(0f, 0f, 1f);
     
@@ -44,13 +44,13 @@ public final class Vec3 {
     
     public static final Vec3 LEFT = new Vec3(-1f, 0f, 0f);
     public static final Vec3 RIGHT = new Vec3(1f, 0f, 0f);
-    
+    */
     
     public static final Vec3 X_AXIS = new Vec3(1f, 0f, 0f);
     public static final Vec3 Y_AXIS = new Vec3(0f, 1f, 0f);
     public static final Vec3 Z_AXIS = new Vec3(0f, 0f, 1f);
     
-    
+    /*
     public static final Vec3 NEGATIVE_INFINITY = new Vec3(
             Float.NEGATIVE_INFINITY,
             Float.NEGATIVE_INFINITY,
@@ -61,7 +61,7 @@ public final class Vec3 {
             Float.POSITIVE_INFINITY,
             Float.POSITIVE_INFINITY
     );
-    
+    */
     
     /*
      * Инплейс методы
@@ -75,6 +75,14 @@ public final class Vec3 {
         if (a.length == 3) {
             this.x = a[0]; this.y = a[1]; this.z = a[2];
         }
+    }
+    
+    public void set(Vec3 v) {
+        this.x = v.x; this.y = v.y; this.z = v.z;
+    }
+    
+    public void setZero() {
+        this.x = this.y = this.z = 0f;
     }
     
     // Арифметические действия
@@ -91,12 +99,6 @@ public final class Vec3 {
         this.x *= s; this.y *= s; this.z *= s;
     }
     
-    public Vec3 scaledBy(float s) {
-        return new Vec3(
-            this.x * s, this.y * s, this.z * s
-        );
-    }
-    
     public void scaleAdd(Vec3 v, float s) {
         this.x += v.x * s;
         this.y += v.y * s;
@@ -111,7 +113,7 @@ public final class Vec3 {
             this.z /= s;
         }
     }
-    
+       
     // Поэлементное умножение (Хадамар)
     public void mul(Vec3 v) {
         this.x *= v.x;
@@ -129,6 +131,7 @@ public final class Vec3 {
             this.z /= v.z;
     }
     
+    
     // Векторные операции
     
     public void cross(Vec3 v) {
@@ -140,7 +143,6 @@ public final class Vec3 {
     
     public void normalize() {
         float len = (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-        
         if(len != 0f) {
             float inv = 1f / len;
             this.x *= inv; this.y *= inv; this.z *= inv;
@@ -157,8 +159,19 @@ public final class Vec3 {
         this.x = Math.abs(this.x);
         this.y = Math.abs(this.y);
         this.z = Math.abs(this.z);
+    }    
+    
+    public void minComponent(Vec3 v) {
+        this.x = Math.min(this.x, v.x);
+        this.y = Math.min(this.y, v.y);
+        this.z = Math.min(this.z, v.z);
     }
     
+    public void maxComponent(Vec3 v) {
+        this.x = Math.max(this.x, v.x);
+        this.y = Math.max(this.y, v.y);
+        this.z = Math.max(this.z, v.z);
+    }
     
     // Misc.
     
@@ -218,30 +231,124 @@ public final class Vec3 {
                Math.abs(this.z) < epsilon;
     }
     
+    public boolean epsilonEquals(Vec3 v, float epsilon) {
+        return Math.abs(this.x - v.x) < epsilon &&
+               Math.abs(this.y - v.y) < epsilon &&
+               Math.abs(this.z - v.z) < epsilon;
+    }
+    
+    public boolean isFinite() {
+        return !Float.isNaN(this.x) && !Float.isInfinite(this.x) &&
+           !Float.isNaN(this.y) && !Float.isInfinite(this.y) &&
+           !Float.isNaN(this.z) && !Float.isInfinite(this.z);
+    }
+    
     
     // Возвращает вектор
-    
-    public Vec3 minComponent(Vec3 v) {
+    /*
+    public Vec3 addedBy(Vec3 v) {
         return new Vec3(
-            Math.min(this.x, v.x),
-            Math.min(this.y, v.y),
-            Math.min(this.z, v.z)
+            this.x + v.x, this.y + v.y, this.z + v.z
         );
     }
     
-    public Vec3 maxComponent(Vec3 v) {
+    public Vec3 subbedBy(Vec3 v) {
         return new Vec3(
-            Math.max(this.x, v.x),
-            Math.max(this.y, v.y),
-            Math.max(this.z, v.z)
+            this.x - v.x, this.y - v.y, this.z - v.z
         );
     }
     
-    public Vec3 min(Vec3 v) {
+    public Vec3 scaledBy(float s) {
+        return new Vec3(
+            this.x * s, this.y * s, this.z * s
+        );
+    }
+    
+    public Vec3 scaledAddedBy(Vec3 v, float s) {
+        return new Vec3(
+            this.x + v.x * s,
+            this.y + v.y * s,
+            this.z + v.z * s
+        );
+    }
+    
+    public Vec3 dividedBy(float s) {
+        if (s != 0f) {
+            return new Vec3(
+                this.x / s,
+                this.y / s,
+                this.z / s
+            );
+        }
+        return new Vec3();
+    }
+
+    public Vec3 multipliedBy(Vec3 v) {
+        return new Vec3(
+            this.x * v.x,
+            this.y * v.y,
+            this.z * v.z
+        );
+    }
+    
+    public Vec3 dividedBy(Vec3 v) {
+        float dx, dy, dz;
+        dx = dy = dz = 0f;
+        if (v.x != 0f)
+            dx = this.x / v.x;
+        if (v.y != 0f)
+            dy = this.y / v.y;
+        if (v.z != 0f)
+            dz = this.z / v.z;
+        return new Vec3(dx, dy, dz);
+    }
+    
+    public Vec3 crossedBy(Vec3 v) {
+        float ax = this.x; float ay = this.y; float az = this.z;
+        float bx = ay * v.z - az * v.y;
+        float by = az * v.x - ax * v.z;
+        float bz = ax * v.y - ay * v.x;
+        return new Vec3(bx, by, bz);
+    }
+    
+    public Vec3 normalized() {
+        float len = (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+        if(len != 0f) {
+            float inv = 1f / len;
+            return new Vec3(
+                this.x * inv, this.y * inv, this.z * inv
+            );
+        }
+        return this.copy();
+    }
+    
+    public Vec3 negated() {
+        return new Vec3(
+            -this.x, -this.y, -this.z
+        );
+    }
+    
+    public Vec3 absed() {
+        return new Vec3(
+            Math.abs(this.x),
+            Math.abs(this.y),
+            Math.abs(this.z)
+        );
+    }    
+    
+    public Vec3 lerpedBy(Vec3 v, float t) {
+        float dx = this.x + (v.x - this.x) * t;
+        float dy = this.y + (v.y - this.y) * t;
+        float dz = this.z + (v.z - this.z) * t;
+        return new Vec3(dx, dy, dz);
+    }    
+    */
+    
+    public Vec3 minLength(Vec3 v) {
         return this.lengthSq() < v.lengthSq() ? this.copy() : v.copy();
     }
     
-    public Vec3 max(Vec3 v) {
+    public Vec3 maxLength(Vec3 v) {
         return this.lengthSq() > v.lengthSq() ? this.copy() : v.copy();
     }
     
@@ -253,7 +360,7 @@ public final class Vec3 {
             ontoNorm.scale(amount);
             return ontoNorm;
         }
-        return Vec3.ZERO.copy();
+        return new Vec3();
     }
     
     public Vec3 reflect(Vec3 normal) {
@@ -266,17 +373,11 @@ public final class Vec3 {
             reflected.sub(n);
             return reflected;
         }
-        return Vec3.ZERO.copy();
+        return new Vec3();
     }
     
     public Vec3 copy() {
         return new Vec3(this.x, this.y, this.z);
-    }
-    
-    public float[] unpack() {
-        float a[] = new float[3];
-        a[0] = this.x; a[1] = this.y; a[2] = this.z;
-        return a;
     }
 
     
@@ -284,30 +385,9 @@ public final class Vec3 {
     /*
     * Статические методы
     */
-        
-    public static Vec3 create() {
-        return new Vec3(0f, 0f, 0f);
-    }
     
-    public static Vec3 create(Vec3 v) {
-        return new Vec3(v.x, v.y, v.z);
-    }
-    
-    public static Vec3 create(float x, float y, float z) {
-        return new Vec3(x, y, z);
-    }
-    
-    public static Vec3 create(float[] a) {
-        if (a.length == 3) {
-            return new Vec3(a[0], a[1], a[2]);   
-        }
-        return Vec3.ZERO.copy();
-    }
-    
-    public static float[] unpack(Vec3 v) {
-        float a[] = new float[3];
-        a[0] = v.x; a[1] = v.y; a[2] = v.z;
-        return a;
+    public static void setZero(Vec3 v) {
+        v.x = v.y = v.z = 0f;
     }
     
     public static Vec3 direction(float x, float y, float z) {
@@ -322,7 +402,7 @@ public final class Vec3 {
             v.normalize();
             return v;
         }
-        return Vec3.ZERO.copy();
+        return new Vec3();
     }
     
     // Арифметические действия
@@ -359,7 +439,7 @@ public final class Vec3 {
                 v.x / s, v.y / s, v.z / s
             );
         }
-        return Vec3.ZERO.copy();
+        return new Vec3();
     }
     
     public static Vec3 mul(Vec3 a, Vec3 b) {
@@ -387,7 +467,7 @@ public final class Vec3 {
         float len = v.length();
         if(len != 0f)
             return new Vec3(v.x / len, v.y / len, v.z / len);
-        return Vec3.ZERO.copy();
+        return new Vec3();
     }
     
     public static Vec3 negate(Vec3 v) {
@@ -420,7 +500,7 @@ public final class Vec3 {
         return v.reflect(normal);
     }
     
-    public Vec3 minComponent(Vec3 a, Vec3 b) {
+    public static Vec3 minComponent(Vec3 a, Vec3 b) {
         return new Vec3(
             Math.min(a.x, b.x),
             Math.min(a.y, b.y),
@@ -428,7 +508,7 @@ public final class Vec3 {
         );
     }
     
-    public Vec3 maxComponent(Vec3 a, Vec3 b) {
+    public static Vec3 maxComponent(Vec3 a, Vec3 b) {
         return new Vec3(
             Math.max(a.x, b.x),
             Math.max(a.y, b.y),
@@ -436,11 +516,11 @@ public final class Vec3 {
         );
     }
     
-    public static Vec3 min(Vec3 a, Vec3 b) {
+    public static Vec3 minLength(Vec3 a, Vec3 b) {
         return a.lengthSq() < b.lengthSq() ? a.copy() : b.copy();
     }
     
-    public static Vec3 max(Vec3 a, Vec3 b) {
+    public static Vec3 maxLength(Vec3 a, Vec3 b) {
         return a.lengthSq() > b.lengthSq() ? a.copy() : b.copy();
     }
     
@@ -489,6 +569,18 @@ public final class Vec3 {
         return Math.abs(v.x) < epsilon &&
                Math.abs(v.y) < epsilon &&
                Math.abs(v.z) < epsilon;
+    }
+    
+    public static boolean epsilonEquals(Vec3 a, Vec3 b, float epsilon) {
+        return Math.abs(a.x - b.x) < epsilon &&
+               Math.abs(a.y - b.y) < epsilon &&
+               Math.abs(a.z - b.z) < epsilon;
+    }
+    
+    public static boolean isFinite(Vec3 v) {
+        return !Float.isNaN(v.x) && !Float.isInfinite(v.x) &&
+           !Float.isNaN(v.y) && !Float.isInfinite(v.y) &&
+           !Float.isNaN(v.z) && !Float.isInfinite(v.z);
     }
     
     
