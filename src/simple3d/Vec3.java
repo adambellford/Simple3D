@@ -7,21 +7,61 @@ package simple3d;
 public final class Vec3 {
     public float x, y, z;
     
+    
     public Vec3() {
         this.x = this.y = this.z = 0f;
     }
+    
     public Vec3(float x, float y, float z) {
         this.x = x; this.y = y; this.z = z;
     }
+    
+    public Vec3(float[] a) {
+        if (a.length == 3) {
+            this.x = a[0];
+            this.y = a[1];
+            this.z = a[2];
+        } else {
+            this.x = 0f; this.y = 0f; this.z = 0f;
+        }
+    }
+    
     public Vec3(Vec3 v) {
         this.x = v.x; this.y = v.y; this.z = v.z;
     }
     
+    
+    
     public static final Vec3 ZERO = new Vec3();
     public static final Vec3 ONE = new Vec3(1f, 1f, 1f);
+    
+    
+    public static final Vec3 BACK = new Vec3(0f, 0f, -1f);
+    public static final Vec3 FORWARD = new Vec3(0f, 0f, 1f);
+    
+    public static final Vec3 DOWN = new Vec3(0f, -1f, 0f);
+    public static final Vec3 UP = new Vec3(0f, 1f, 0f);
+    
+    public static final Vec3 LEFT = new Vec3(-1f, 0f, 0f);
+    public static final Vec3 RIGHT = new Vec3(1f, 0f, 0f);
+    
+    
     public static final Vec3 X_AXIS = new Vec3(1f, 0f, 0f);
     public static final Vec3 Y_AXIS = new Vec3(0f, 1f, 0f);
     public static final Vec3 Z_AXIS = new Vec3(0f, 0f, 1f);
+    
+    
+    public static final Vec3 NEGATIVE_INFINITY = new Vec3(
+            Float.NEGATIVE_INFINITY,
+            Float.NEGATIVE_INFINITY,
+            Float.NEGATIVE_INFINITY
+    );
+    public static final Vec3 POSITIVE_INFINITY = new Vec3(
+            Float.POSITIVE_INFINITY,
+            Float.POSITIVE_INFINITY,
+            Float.POSITIVE_INFINITY
+    );
+    
     
     /*
      * Инплейс методы
@@ -29,6 +69,12 @@ public final class Vec3 {
     
     public void set(float x, float y, float z) {
         this.x = x; this.y = y; this.z = z;
+    }
+    
+    public void set(float[] a) {
+        if (a.length == 3) {
+            this.x = a[0]; this.y = a[1]; this.z = a[2];
+        }
     }
     
     // Арифметические действия
@@ -45,12 +91,43 @@ public final class Vec3 {
         this.x *= s; this.y *= s; this.z *= s;
     }
     
+    public Vec3 scaledBy(float s) {
+        return new Vec3(
+            this.x * s, this.y * s, this.z * s
+        );
+    }
+    
     public void scaleAdd(Vec3 v, float s) {
         this.x += v.x * s;
         this.y += v.y * s;
         this.z += v.z * s;
     }
     
+    // Деление на скаляр
+    public void div(float s) {
+        if (s != 0f) {
+            this.x /= s;
+            this.y /= s;
+            this.z /= s;
+        }
+    }
+    
+    // Поэлементное умножение (Хадамар)
+    public void mul(Vec3 v) {
+        this.x *= v.x;
+        this.y *= v.y;
+        this.z *= v.z;
+    }
+    
+    // Поэлементное деление
+    public void div(Vec3 v) {
+        if (v.x != 0f)
+            this.x /= v.x;
+        if (v.y != 0f)
+            this.y /= v.y;
+        if (v.z != 0f)
+            this.z /= v.z;
+    }
     
     // Векторные операции
     
@@ -135,15 +212,37 @@ public final class Vec3 {
         return Float.NaN;
     }
     
+    public boolean isZero(float epsilon) {
+        return Math.abs(this.x) < epsilon &&
+               Math.abs(this.y) < epsilon &&
+               Math.abs(this.z) < epsilon;
+    }
+    
     
     // Возвращает вектор
     
+    public Vec3 minComponent(Vec3 v) {
+        return new Vec3(
+            Math.min(this.x, v.x),
+            Math.min(this.y, v.y),
+            Math.min(this.z, v.z)
+        );
+    }
+    
+    public Vec3 maxComponent(Vec3 v) {
+        return new Vec3(
+            Math.max(this.x, v.x),
+            Math.max(this.y, v.y),
+            Math.max(this.z, v.z)
+        );
+    }
+    
     public Vec3 min(Vec3 v) {
-        return this.lengthSq() < v.lengthSq() ? this : v;
+        return this.lengthSq() < v.lengthSq() ? this.copy() : v.copy();
     }
     
     public Vec3 max(Vec3 v) {
-        return this.lengthSq() > v.lengthSq() ? this : v;
+        return this.lengthSq() > v.lengthSq() ? this.copy() : v.copy();
     }
     
     public Vec3 projection(Vec3 onto) {
@@ -173,12 +272,58 @@ public final class Vec3 {
     public Vec3 copy() {
         return new Vec3(this.x, this.y, this.z);
     }
+    
+    public float[] unpack() {
+        float a[] = new float[3];
+        a[0] = this.x; a[1] = this.y; a[2] = this.z;
+        return a;
+    }
 
     
     
     /*
     * Статические методы
     */
+        
+    public static Vec3 create() {
+        return new Vec3(0f, 0f, 0f);
+    }
+    
+    public static Vec3 create(Vec3 v) {
+        return new Vec3(v.x, v.y, v.z);
+    }
+    
+    public static Vec3 create(float x, float y, float z) {
+        return new Vec3(x, y, z);
+    }
+    
+    public static Vec3 create(float[] a) {
+        if (a.length == 3) {
+            return new Vec3(a[0], a[1], a[2]);   
+        }
+        return Vec3.ZERO.copy();
+    }
+    
+    public static float[] unpack(Vec3 v) {
+        float a[] = new float[3];
+        a[0] = v.x; a[1] = v.y; a[2] = v.z;
+        return a;
+    }
+    
+    public static Vec3 direction(float x, float y, float z) {
+        Vec3 v = new Vec3(x, y, z);
+        v.normalize();
+        return v;
+    }
+    
+    public static Vec3 direction(float[] a) {
+        if (a.length == 3) {
+            Vec3 v = new Vec3(a[0], a[1], a[2]);
+            v.normalize();
+            return v;
+        }
+        return Vec3.ZERO.copy();
+    }
     
     // Арифметические действия
     
@@ -206,6 +351,26 @@ public final class Vec3 {
             v.y + addend.y * s,
             v.z + addend.z * s
         );
+    }
+    
+    public static Vec3 div(Vec3 v, float s) {
+        if (s != 0) {
+            return new Vec3(
+                v.x / s, v.y / s, v.z / s
+            );
+        }
+        return Vec3.ZERO.copy();
+    }
+    
+    public static Vec3 mul(Vec3 a, Vec3 b) {
+        return new Vec3(a.x * b.x, a.y * b.y, a.z * b.z);
+    }
+    
+    public static Vec3 div(Vec3 a, Vec3 b) {
+        float x = b.x != 0f ? a.x / b.x : a.x;
+        float y = b.y != 0f ? a.y / b.y : a.y;
+        float z = b.z != 0f ? a.z / b.z : a.z;
+        return new Vec3(x, y, z);
     }
     
     // Векторные операции
@@ -255,12 +420,28 @@ public final class Vec3 {
         return v.reflect(normal);
     }
     
+    public Vec3 minComponent(Vec3 a, Vec3 b) {
+        return new Vec3(
+            Math.min(a.x, b.x),
+            Math.min(a.y, b.y),
+            Math.min(a.z, b.z)
+        );
+    }
+    
+    public Vec3 maxComponent(Vec3 a, Vec3 b) {
+        return new Vec3(
+            Math.max(a.x, b.x),
+            Math.max(a.y, b.y),
+            Math.max(a.z, b.z)
+        );
+    }
+    
     public static Vec3 min(Vec3 a, Vec3 b) {
-        return a.lengthSq() < b.lengthSq() ? a : b;
+        return a.lengthSq() < b.lengthSq() ? a.copy() : b.copy();
     }
     
     public static Vec3 max(Vec3 a, Vec3 b) {
-        return a.lengthSq() > b.lengthSq() ? a : b;
+        return a.lengthSq() > b.lengthSq() ? a.copy() : b.copy();
     }
     
     public static float dot(Vec3 a, Vec3 b) {
@@ -302,6 +483,12 @@ public final class Vec3 {
             return (a.dot(b) / (a.length() * b.length()));
         }
         return Float.NaN;
+    }
+    
+    public static boolean isZero(Vec3 v, float epsilon) {
+        return Math.abs(v.x) < epsilon &&
+               Math.abs(v.y) < epsilon &&
+               Math.abs(v.z) < epsilon;
     }
     
     
