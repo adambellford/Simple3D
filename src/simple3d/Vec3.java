@@ -189,29 +189,29 @@ public final class Vec3 {
     }
     
     public float length() {
-        return (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+        return (float) Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
     }
     
     public float lengthSq() {
-        return this.x * this.x + this.y * this.y + this.z * this.z;
+        return this.x*this.x + this.y*this.y + this.z*this.z;
     }
     
     public float distance(Vec3 v) {
         float dx = this.x - v.x;
         float dy = this.y - v.y;
         float dz = this.z - v.z;
-        return (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+        return (float) Math.sqrt(dx*dx + dy*dy + dz*dz);
     }
     
     public float distanceSq(Vec3 v) {
         float dx = this.x - v.x;
         float dy = this.y - v.y;
         float dz = this.z - v.z;
-        return dx * dx + dy * dy + dz * dz;
+        return dx*dx + dy*dy + dz*dz;
     }
     
     public float projectionScalar(Vec3 onto) {
-        float vLen = (float) Math.sqrt(onto.x * onto.x + onto.y * onto.y + onto.z * onto.z);
+        float vLen = (float) Math.sqrt(onto.x*onto.x + onto.y*onto.y + onto.z*onto.z);
         if(vLen == 0f)
             return 0f;
         float dotProd = this.x * onto.x + this.y * onto.y + this.z * onto.z;
@@ -529,29 +529,29 @@ public final class Vec3 {
     }
     
     public static float length(Vec3 v) {
-        return (float) Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+        return (float) Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
     }
     
     public static float lengthSq(Vec3 v) {
-        return v.x * v.x + v.y * v.y + v.z * v.z;
+        return v.x*v.x + v.y*v.y + v.z*v.z;
     }
     
     public static float distance(Vec3 a, Vec3 b) {
         float dx = a.x - b.x;
         float dy = a.y - b.y;
         float dz = a.z - b.z;
-        return (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+        return (float) Math.sqrt(dx*dx + dy*dy + dz*dz);
     }
     
     public static float distanceSq(Vec3 a, Vec3 b) {
         float dx = a.x - b.x;
         float dy = a.y - b.y;
         float dz = a.z - b.z;
-        return dx * dx + dy * dy + dz * dz;
+        return dx*dx + dy*dy + dz*dz;
     }
     
     public static float projectionScalar(Vec3 v, Vec3 onto) {
-        float vLen = (float) Math.sqrt(onto.x * onto.x + onto.y * onto.y + onto.z * onto.z);
+        float vLen = (float) Math.sqrt(onto.x*onto.x + onto.y*onto.y + onto.z*onto.z);
         if(vLen == 0f)
             return 0f;
         float dotProd = v.x * onto.x + v.y * onto.y + v.z * onto.z;
